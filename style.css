@@ -1,331 +1,564 @@
-sxwzy
-mnatannnn
-Invisible
-﻿
-sxwzy — 17/09/2026 10:20
-<?php
 
-header('Content-Type: application/json; charset=utf-8');
-
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "phrgyak";
-
-// Create connection
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-$get_muvelet = isset($_GET['muvelet']) ? $_GET['muvelet'] : '';
-
-
-$post_muvelet = isset($_POST['muvelet']) ? $_POST['muvelet'] : '';
-
-?>
-sxwzy — 17/09/2026 11:02
-<!DOCTYPE html>
-<html lang="en">
-<body>
-    <h1>Felhasználók kezelése</h1>
-
-    <h2>Keresés név alapján</h2>
-    <input type="text" id="keresoMezo" placeholder="Pl: Anna">
-    <button type="button" id="keresesId">Keresés</button>
-    <button type="button" id="keresesTorles">Összes mutatása</button>
-
-    <h2>Új felhasználó / Módosítása</h2>
-    <form id="userForm">
-        <input type="hidden" id="userId">
-
-        <label for="username">Felhasználónév:</label>
-        <input type="text" id="username"><br>
-
-        <label for="firstname">Keresztnév:</label>
-        <input type="text" id="firstname"><br>
-
-        <label for="lastname">Vezetéknév:</label>
-        <input type="text" id="lastname"><br>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email"><br>
-
-        <label for="password">Jelszó:</label>
-        <input type="password" id="password">
-        <small>módosításnál üresen hagyható</small><br>
-
-        <button type="submit">Mentés</button>
-        <button type="button" id="cancel">Mégse</button>
-    </form>
-</body>
-</html>
-sxwzy — 17/09/2026 11:16
-<?php
-
-header('Content-Type: application/json; charset=utf-8');
-
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "phrgyak"; // vagy mydb, írd át a saját adatbázis nevedre
-
-// Create connection
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-$get_muvelet = isset($_GET['muvelet']) ? $_GET['muvelet'] : '';
-$post_muvelet = isset($_POST['muvelet']) ? $_POST['muvelet'] : '';
-
-// GetAll (vagy ha nincs megadva művelet)
-if ($get_muvelet === "getAll" || ($get_muvelet === '' && $post_muvelet === '')) {
-    $sql = "SELECT id, username, firstname, lastname, email FROM users";
-    $eredmeny = mysqli_query($conn, $sql);
-
-    $users = array();
-    while ($sor = mysqli_fetch_assoc($eredmeny)) {
-        $users[] = $sor;
-    }
-
-    echo json_encode($users);
-    mysqli_close($conn);
-    exit;
-}
-
-// Get by name (Keresés név alapján)
-if ($get_muvelet === 'getByName') {
-    $nev = isset($_GET['name']) ? $_GET['name'] : '';
-
-    // Biztonságosabb lenne prepared statementtel, de a mintád alapján így néz ki:
-    $sql = "SELECT id, username, firstname, lastname, email FROM users WHERE username LIKE '%$nev%'";
-    $eredmeny = mysqli_query($conn, $sql);
-
-    $users = array();
-    while ($sor = mysqli_fetch_assoc($eredmeny)) {
-        $users[] = $sor;
-    }
-
-    echo json_encode($users);
-    mysqli_close($conn);
-    exit;
-}
-
-mysqli_close($conn);
-
-?>
-sxwzy — 17/09/2026 11:28
-function betoltLista(users){
-    var tabla= document.getElementById('userTabla');
-
-    var sorok = tabla.querySelectorAll('tr:not(:first-child)');
-    for(var j =0;  ){
-
-    }
-}
-
-
-
-function osszesBetoltese(){
-    fetch('API.php?muvelet=gettAll')
-    .then(function(response){
-         return response.json();
-    })
-    .then(function(users){
-        betoltLista(users);
-    });
-}
-function kereses(){
-
-    var nev= document.getElementById('kereses').value;
-
-
-
-    fetch('API.php?muvelet=getByName&name=' + nev)
-    .then(function(response){
-        return response.json();
-    })
-    .then(function(users){
-        betoltLista(users);
-    });
-sxwzy — 17/09/2026 13:38
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-message.txt
-6 KB
-sxwzy — 21/09/2026 11:05
-
-
-sxwzy — 23/09/2026 12:55
-package com.oragyak.spring.controller;
-
-import com.oragyak.spring.dto.request.CreateUserRequest;
-import com.oragyak.spring.dto.response.UserResponse;
-import com.oragyak.spring.service.UserService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-@RequestMapping("/api/users")
-@RequiredArgsConstructor
-public class UserController {
-
-    private final UserService userService;
-
-    @PostMapping
-    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
-        UserResponse response = userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-}
-package com.oragyak.spring.controller;
-
-import com.oragyak.spring.dto.request.CreateUserRequest;
-import com.oragyak.spring.dto.response.UserResponse;
-import com.oragyak.spring.service.UserService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-@RequestMapping("/api/users")
-@RequiredArgsConstructor
-public class UserController {
-
-    private final UserService userService;
-
-    @PostMapping
-    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
-        UserResponse response = userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-}
-Markoooo
- started a call that lasted 3 hours. — 23/09/2026 20:20
-sxwzy — 13:06
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #f2f2f2;
-}
-
-style.css
-2 KB
-Markoooo — 13:29
-
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700&display=swap');
+ 
 :root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --bg-main: #f8fafc;
-    --bg-card: #ffffff;
-    --text-dark: #0f172a;
-    --text-muted: #64748b;
-    --border-color: #e2e8f0;
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
-    --transition: all 0.3s ease;
+    --primary: #ff5a1f;
+    --primary-hover: #ff7a45;
+    --primary-glow: rgba(255, 90, 31, .35);
+    --dark: #0b0d10;
+    --dark-soft: #14181d;
+    --background: #0f1216;
+    --surface: #171b21;
+    --surface-2: #1e242c;
+    --text: #e8ebf0;
+    --muted: #8b95a5;
+    --border: #262d37;
+    --radius: 6px;
+    --cut: 14px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .45);
+    --font-display: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
+    --font-body: 'Inter', Arial, Helvetica, sans-serif;
 }
-
-*, *::before, *::after {
+ 
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
-
+ 
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+}
+ 
 body {
     margin: 0;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-main);
-    color: var(--text-dark);
+    font-family: var(--font-body);
     line-height: 1.6;
+    color: var(--text);
+    background: var(--background);
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
 }
+ 
+img {
+    display: block;
+    max-width: 100%;
+}
+ 
+button,
+input,
+select {
+    font: inherit;
+}
+ 
 
+button {
+    border: 0;
+    padding: 11px 20px;
+    color: #fff;
+    background: var(--primary);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    transition: background .2s ease, transform .2s ease;
+}
+ 
+button:hover {
+    background: var(--primary-hover);
+}
+ 
+button:active {
+    transform: translateY(1px);
+}
+ 
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid var(--primary-glow);
+    outline-offset: 3px;
+}
+ 
 
 header {
-    background-color: var(--bg-card);
-    padding: 15px 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: var(--shadow-sm);
     position: sticky;
     top: 0;
     z-index: 100;
+    width: 100%;
+    background: rgba(11, 13, 16, .88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #fff;
+    border-bottom: 1px solid var(--border);
 }
-
-.logo {
-    color: var(--primary-color);
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    text-decoration: none;
-}
-
-header nav {
+ 
+.nav {
+    width: min(1200px, 100%);
+    margin: 0 auto;
+    padding: 14px 24px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 24px;
 }
-
-header a {
-    margin-left: 24px;
+ 
+.nav h1 {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+ 
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+ 
+nav a {
+    position: relative;
+    color: #cfd5de;
     text-decoration: none;
-    color: var(--text-dark);
-    font-weight: 500;
-    transition: var(--transition);
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: .95rem;
+    transition: color .2s ease;
 }
-
-header a:hover {
-    color: var(--primary-color);
+ 
+nav a::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 2px;
+    height: 2px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s ease;
 }
-
-
-.hero {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    color: white;
-    text-align: center;
-    padding: 80px 20px;
+ 
+nav a:hover {
+    color: #fff;
 }
-
-.hero h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
+ 
+nav a:hover::after {
+    transform: scaleX(1);
 }
-
-.hero p {
-    color: #94a3b8;
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin: 0 auto;
+ 
+nav button {
+    padding: 9px 16px;
 }
-
-
-.kereses {
-    background-color: var(--bg-card);
-    padding: 30px 20px;
-    text-align: center;
-
-
  
 
+.hero {
+    position: relative;
+    padding: clamp(56px, 9vw, 120px) 20px;
+    color: #fff;
+    text-align: center;
+    background:
+        radial-gradient(ellipse at 20% 0%, rgba(255, 90, 31, .28), transparent 55%),
+        repeating-linear-gradient(115deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 26px),
+        linear-gradient(180deg, #0b0d10, #151a21);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+}
+ 
+
+ 
+.hero > div {
+    position: relative;
+    width: min(1100px, 100%);
+    margin: 0 auto;
+}
+ 
+.hero h2 {
+    margin: 0 0 14px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    font-size: clamp(2.6rem, 8vw, 5.5rem);
+    line-height: .98;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+}
+ 
+.hero p {
+    margin: 0 auto 34px;
+    max-width: 600px;
+    color: #aab3c0;
+    font-size: clamp(1rem, 2vw, 1.15rem);
+}
+ 
+
+.kereso {
+    display: grid;
+    grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(145px, 1fr)) auto;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--primary);
+    border-radius: var(--radius);
+    background: rgba(23, 27, 33, .92);
+    box-shadow: var(--shadow);
+    text-align: left;
+}
+ 
+.kereso input,
+.kereso select {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    background: var(--dark-soft);
+    transition: border-color .2s ease;
+}
+ 
+.kereso input::placeholder {
+    color: var(--muted);
+}
+ 
+.kereso input:hover,
+.kereso select:hover {
+    border-color: #3a4351;
+}
+ 
+.kereso input:focus,
+.kereso select:focus {
+    border-color: var(--primary);
+}
+ 
+.kereso button {
+    min-height: 48px;
+    white-space: nowrap;
+}
+ 
+
+main {
+    width: min(1200px, 100%);
+    margin: 0 auto;
+    padding: 48px 24px 60px;
+}
+ 
+main section {
+    margin-bottom: 56px;
+}
+ 
+main section > h2 {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 0 24px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    font-size: clamp(1.9rem, 3.5vw, 2.6rem);
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+ 
+main section > h2::before {
+    content: "";
+    flex: none;
+    width: 8px;
+    height: 1.05em;
+    background: var(--primary);
+    transform: skewX(-18deg);
+}
+ 
+.kategoriak {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+ 
+.kategoriak button {
+    min-width: 110px;
+    color: var(--text);
+    background: var(--surface-2);
+}
+ 
+.kategoriak button:hover,
+.kategoriak button.aktiv,
+.kategoriak button[aria-pressed="true"] {
+    color: #fff;
+    background: var(--primary);
+}
+ 
+
+.autok {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+ 
+.auto {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+ 
+.auto::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s ease;
+}
+ 
+.auto:hover {
+    transform: translateY(-4px);
+    border-color: #3a4351;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, .55), 0 0 0 1px var(--primary-glow);
+}
+ 
+.auto:hover::after {
+    transform: scaleX(1);
+}
+ 
+.auto img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: var(--surface-2);
+    transition: transform .5s ease;
+}
+ 
+.auto:hover img {
+    transform: scale(1.05);
+}
+ 
+.adatok {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    height: calc(100% - 220px);
+}
+ 
+.adatok h3 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.55rem;
+    line-height: 1.15;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+}
+ 
+.adatok p {
+    margin: 0 0 6px;
+    color: var(--muted);
+    font-size: .95rem;
+}
+ 
+.adatok .ar {
+    margin: 8px 0 14px;
+    color: var(--primary);
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: .01em;
+}
+ 
+.adatok button {
+    width: 100%;
+    margin-top: auto;
+    padding-top: 11px;
+    padding-bottom: 11px;
+}
+
+.cimke {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 3px 10px;
+    color: #fff;
+    background: var(--surface-2);
+    border-left: 3px solid var(--primary);
+    font-size: .78rem;
+    font-weight: 600;
+}
+ 
+
+#rolunk {
+    padding: clamp(24px, 4vw, 40px);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+ 
+#rolunk p {
+    max-width: 850px;
+    color: var(--muted);
+}
+ 
+footer {
+    padding: 28px 20px;
+    color: var(--muted);
+    text-align: center;
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+}
+ 
+footer p {
+    margin: 0;
+}
+ 
+[hidden] {
+    display: none !important;
+}
+ 
+
+@media (max-width: 1000px) {
+    .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+ 
+    nav {
+        justify-content: flex-start;
+        width: 100%;
+    }
+ 
+    .kereso {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+ 
+    .kereso input {
+        grid-column: 1 / -1;
+    }
+ 
+    .autok {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+}
+ 
+
+@media (max-width: 600px) {
+    html {
+        scroll-padding-top: 150px;
+    }
+ 
+    .nav {
+        padding: 12px 16px;
+    }
+ 
+    nav {
+        gap: 4px;
+    }
+ 
+    nav a {
+        padding: 7px 8px;
+        font-size: .9rem;
+    }
+ 
+    nav button {
+        flex: 1 1 auto;
+        padding: 9px 10px;
+        font-size: .95rem;
+    }
+ 
+    .hero {
+        padding: 48px 15px;
+    }
+ 
+    .kereso {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 12px;
+        gap: 10px;
+    }
+ 
+    .kereso input {
+        grid-column: auto;
+    }
+ 
+    main {
+        padding: 32px 15px 40px;
+    }
+ 
+    main section {
+        margin-bottom: 36px;
+    }
+ 
+    .kategoriak button {
+        flex: 1 1 90px;
+    }
+ 
+    .autok {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+ 
+    .auto img {
+        height: clamp(190px, 58vw, 280px);
+    }
+ 
+    .adatok {
+        height: auto;
+        min-height: 0;
+        padding: 17px;
+    }
+ 
+    .adatok button {
+        margin-top: 10px;
+    }
+}
+ 
+@media (max-width: 360px) {
+    nav a,
+    nav button {
+        font-size: .82rem;
+    }
+ 
+    .adatok h3 {
+        font-size: 1.3rem;
+    }
+}
+ 
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+ 
+    .auto:hover,
+    .auto:hover img {
+        transform: none;
+    }
+}
