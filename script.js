@@ -1,10 +1,9 @@
-/* AutoMarket – működés
-   A függvénynevek megegyeznek az eredetivel, a HTML onclick-jei maradhatnak. */
+
  
-let aktivTipus = "mind"; // "mind" | "auto" | "motor"
+let aktivTipus = "mind"; // 
  
  
-/* ---------- Értesítés (alert helyett) ---------- */
+
  
 let toastIdozito;
  
@@ -40,7 +39,6 @@ function hirdetes() {
 }
  
  
-/* ---------- Kedvencek (kapcsolható) ---------- */
  
 function kedvenc(gomb) {
     if (!gomb.dataset.eredeti) {
@@ -55,8 +53,7 @@ function kedvenc(gomb) {
     uzenet(bekapcsolva ? "Hozzáadva a kedvencekhez" : "Eltávolítva a kedvencekből");
 }
  
- 
-/* ---------- Kategóriák ---------- */
+
  
 function aktivGomb() {
     const gombok = document.querySelectorAll(".kategoriak button");
@@ -93,15 +90,14 @@ function mutatMindet() {
 }
  
  
-/* ---------- Keresés ---------- */
+
  
 function kereses() {
     frissit();
 }
  
  
-/* A kategória és a keresőszűrők együtt működnek:
-   ha kategóriát váltasz, a keresés feltételei megmaradnak. */
+
  
 function frissit() {
     const keresett = document.getElementById("kereses").value.trim().toLowerCase();
@@ -172,7 +168,7 @@ function uresAllapot(talalat) {
 }
  
  
-/* ---------- Indítás ---------- */
+
  
 document.addEventListener("DOMContentLoaded", function () {
     const keresoMezo = document.getElementById("kereses");
@@ -187,7 +183,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
  
-    // A legördülők változására azonnal szűrjön
     ["marka", "evjarat", "ar"].forEach(function (id) {
         const elem = document.getElementById(id);
         if (elem) elem.addEventListener("change", kereses);
