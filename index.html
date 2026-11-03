@@ -1,10 +1,518 @@
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoMarket</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AutoMarket – használt autók</title>
+    <meta name="description" content="Használt autók egy helyen: szűrj márka, évjárat és ár szerint.">
+
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary: #ff5a1f;
+    --primary-hover: #ff7a45;
+    --primary-glow: rgba(255, 90, 31, .35);
+    --dark: #0b0d10;
+    --dark-soft: #14181d;
+    --background: #0f1216;
+    --surface: #171b21;
+    --surface-2: #1e242c;
+    --text: #e8ebf0;
+    --muted: #8b95a5;
+    --border: #262d37;
+    --radius: 6px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .45);
+    --font-display: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
+    --font-body: 'Inter', Arial, Helvetica, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+body {
+    margin: 0;
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--background);
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+}
+
+img { display: block; max-width: 100%; }
+
+button, input, select { font: inherit; }
+
+button {
+    border: 0;
+    padding: 11px 20px;
+    color: #fff;
+    background: var(--primary);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    transition: background .2s ease, transform .2s ease;
+}
+
+button:hover { background: var(--primary-hover); }
+button:active { transform: translateY(1px); }
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 3px solid var(--primary-glow);
+    outline-offset: 3px;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    background: rgba(11, 13, 16, .88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #fff;
+    border-bottom: 1px solid var(--border);
+}
+
+.nav {
+    width: min(1200px, 100%);
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.nav h1 {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+nav a {
+    position: relative;
+    color: #cfd5de;
+    text-decoration: none;
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: .95rem;
+    transition: color .2s ease;
+}
+
+nav a::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 2px;
+    height: 2px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s ease;
+}
+
+nav a:hover { color: #fff; }
+nav a:hover::after { transform: scaleX(1); }
+nav button { padding: 9px 16px; }
+
+.hero {
+    position: relative;
+    padding: clamp(56px, 9vw, 120px) 20px;
+    color: #fff;
+    text-align: center;
+    background:
+        radial-gradient(ellipse at 20% 0%, rgba(255, 90, 31, .28), transparent 55%),
+        repeating-linear-gradient(115deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 26px),
+        linear-gradient(180deg, #0b0d10, #151a21);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.hero > div {
+    position: relative;
+    width: min(1100px, 100%);
+    margin: 0 auto;
+}
+
+.hero h2 {
+    margin: 0 0 14px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    font-size: clamp(2.6rem, 8vw, 5.5rem);
+    line-height: .98;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+}
+
+.hero p {
+    margin: 0 auto 34px;
+    max-width: 600px;
+    color: #aab3c0;
+    font-size: clamp(1rem, 2vw, 1.15rem);
+}
+
+.kereso {
+    display: grid;
+    grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(145px, 1fr)) auto;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--primary);
+    border-radius: var(--radius);
+    background: rgba(23, 27, 33, .92);
+    box-shadow: var(--shadow);
+    text-align: left;
+}
+
+.kereso input, .kereso select {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    background: var(--dark-soft);
+    transition: border-color .2s ease;
+}
+
+.kereso input::placeholder { color: var(--muted); }
+.kereso input:hover, .kereso select:hover { border-color: #3a4351; }
+.kereso input:focus, .kereso select:focus { border-color: var(--primary); }
+.kereso button { min-height: 48px; white-space: nowrap; }
+
+main {
+    width: min(1200px, 100%);
+    margin: 0 auto;
+    padding: 48px 24px 60px;
+}
+
+main section { margin-bottom: 56px; }
+
+main section > h2 {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 0 24px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    font-size: clamp(1.9rem, 3.5vw, 2.6rem);
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+main section > h2::before {
+    content: "";
+    flex: none;
+    width: 8px;
+    height: 1.05em;
+    background: var(--primary);
+    transform: skewX(-18deg);
+}
+
+.kategoriak {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.kategoriak button {
+    min-width: 110px;
+    color: var(--text);
+    background: var(--surface-2);
+}
+
+.kategoriak button:hover,
+.kategoriak button.aktiv,
+.kategoriak button[aria-pressed="true"] {
+    color: #fff;
+    background: var(--primary);
+}
+
+.autok {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
+.auto {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.auto::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s ease;
+}
+
+.auto:hover {
+    transform: translateY(-4px);
+    border-color: #3a4351;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, .55), 0 0 0 1px var(--primary-glow);
+}
+
+.auto:hover::after { transform: scaleX(1); }
+
+.auto img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: var(--surface-2);
+    transition: transform .5s ease;
+}
+
+.auto:hover img { transform: scale(1.05); }
+
+.adatok {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    height: calc(100% - 220px);
+}
+
+.adatok h3 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.55rem;
+    line-height: 1.15;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+}
+
+.adatok p {
+    margin: 0 0 6px;
+    color: var(--muted);
+    font-size: .95rem;
+}
+
+.adatok .ar {
+    margin: 8px 0 14px;
+    color: var(--primary);
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: .01em;
+}
+
+.adatok button {
+    width: 100%;
+    margin-top: auto;
+    padding-top: 11px;
+    padding-bottom: 11px;
+}
+
+.adatok button.kedvenc-aktiv {
+    color: var(--primary);
+    background: transparent;
+    box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+.cimke {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 3px 10px;
+    color: #fff;
+    background: var(--surface-2);
+    border-left: 3px solid var(--primary);
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.nincs-talalat {
+    margin: 8px 0 0;
+    padding: 28px 20px;
+    color: var(--muted);
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+}
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 200;
+    max-width: calc(100% - 32px);
+    padding: 12px 20px;
+    color: #fff;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 16px);
+    transition: opacity .25s ease, transform .25s ease;
+}
+
+.toast.latszik {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+#rolunk {
+    padding: clamp(24px, 4vw, 40px);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+#rolunk p {
+    max-width: 850px;
+    color: var(--muted);
+}
+
+footer {
+    padding: 28px 20px;
+    color: var(--muted);
+    text-align: center;
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+}
+
+footer p { margin: 0; }
+
+[hidden] { display: none !important; }
+
+@media (max-width: 1000px) {
+    .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    nav {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .kereso {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .kereso input { grid-column: 1 / -1; }
+
+    .autok {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+}
+
+@media (max-width: 600px) {
+    html { scroll-padding-top: 150px; }
+
+    .nav { padding: 12px 16px; }
+
+    nav { gap: 4px; }
+
+    nav a {
+        padding: 7px 8px;
+        font-size: .9rem;
+    }
+
+    nav button {
+        flex: 1 1 auto;
+        padding: 9px 10px;
+        font-size: .95rem;
+    }
+
+    .hero { padding: 48px 15px; }
+
+    .kereso {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .kereso input { grid-column: auto; }
+
+    main { padding: 32px 15px 40px; }
+
+    main section { margin-bottom: 36px; }
+
+    .kategoriak button { flex: 1 1 90px; }
+
+    .autok {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .auto img { height: clamp(190px, 58vw, 280px); }
+
+    .adatok {
+        height: auto;
+        min-height: 0;
+        padding: 17px;
+    }
+
+    .adatok button { margin-top: 10px; }
+}
+
+@media (max-width: 360px) {
+    nav a, nav button { font-size: .82rem; }
+    .adatok h3 { font-size: 1.3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+
+    .auto:hover, .auto:hover img { transform: none; }
+}
+    </style>
 </head>
 
 <body>
@@ -13,417 +521,361 @@
     <div class="nav">
         <h1>AutoMarket</h1>
 
-        <nav>
-            <a href="#autok">Autók</a>
-            <a href="#motorok">Motorok</a>
+        <nav aria-label="Főmenü">
+            <a href="#autok">Hirdetések</a>
             <a href="#rolunk">Rólunk</a>
-            <button onclick="bejelentkezes()">Bejelentkezés</button>
-            <button onclick="hirdetes()">Hirdetés feladása</button>
+            <button type="button" onclick="hirdetes()">Hirdetés feladása</button>
+            <button type="button" onclick="bejelentkezes()">Bejelentkezés</button>
         </nav>
     </div>
 </header>
 
-
 <section class="hero">
     <div>
-        <h2>Találd meg a következő autódat</h2>
-        <p>Használtautók és motorok egyszerűen, egy helyen.</p>
+        <h2>Találd meg a következő járgányod</h2>
+        <p>Ellenőrzött használt autók  valós áron.</p>
 
-        <div class="kereso">
+        <div class="kereso" role="search">
+            <input type="text" id="kereses" placeholder="Keress típusra, pl. Golf" aria-label="Keresés">
 
-            <input 
-                type="text" 
-                id="kereses" 
-                placeholder="Márka vagy modell"
-            >
-
-            <select id="marka">
+            <select id="marka" aria-label="Márka">
                 <option value="">Minden márka</option>
-                <option value="BMW">BMW</option>
-                <option value="Audi">Audi</option>
-                <option value="Ford">Ford</option>
-                <option value="Seat">Seat</option>
-                <option value="Volkswagen">Volkswagen</option>
-                <option value="Mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+                <option value="bmw">BMW</option>
+                <option value="mercedes">Mercedes-Benz</option>
+                <option value="skoda">Škoda</option>
+                <option value="suzuki">Suzuki</option>
+                <option value="volkswagen">Volkswagen</option>
             </select>
 
-            <select id="evjarat">
-                <option value="">Minden évjárat</option>
-                <option value="2020">2020 után</option>
-                <option value="2015">2015 után</option>
-                <option value="2010">2010 után</option>
-                <option value="2005">2005 után</option>
+            <select id="evjarat" aria-label="Évjárat">
+                <option value="">Bármilyen évjárat</option>
+                <option value="2015">2015-től</option>
+                <option value="2018">2018-tól</option>
+                <option value="2020">2020-tól</option>
+                <option value="2022">2022-től</option>
             </select>
 
-            <select id="ar">
-                <option value="">Minden ár</option>
-                <option value="2000000">2 millió Ft alatt</option>
-                <option value="4000000">4 millió Ft alatt</option>
-                <option value="6000000">6 millió Ft alatt</option>
-                <option value="10000000">10 millió Ft alatt</option>
+            <select id="ar" aria-label="Maximum ár">
+                <option value="">Bármilyen ár</option>
+                <option value="3000000">3 millió Ft-ig</option>
+                <option value="6000000">6 millió Ft-ig</option>
+                <option value="10000000">10 millió Ft-ig</option>
+                <option value="15000000">15 millió Ft-ig</option>
+                <option value="30000000">30 millió Ft-ig</option>
             </select>
 
-            <button onclick="kereses()">Keresés</button>
-
+            <button type="button" onclick="kereses()">Keresés</button>
         </div>
     </div>
 </section>
 
-
 <main>
-
-    <section>
-        <h2>Járművek</h2>
+    <section id="autok">
+        <h2>Kiemelt autóhirdetések</h2>
 
         <div class="kategoriak">
-            <button onclick="mutatAutok()">Autók</button>
-            <button onclick="mutatMotorok()">Motorok</button>
-            <button onclick="mutatMindet()">Összes</button>
+            <button type="button" onclick="mutatMindet()">Mind</button>
+            <button type="button" onclick="mutatAutok()">Autók</button>
         </div>
-    </section>
-
-
-    <section id="autok">
-
-        <h2>Eladó autók</h2>
-
-        <div class="autok" id="jarmuvek">
-
-
-            <div class="auto"
-                data-marka="BMW"
-                data-ev="2019"
-                data-ar="7290000"
-                data-tipus="auto">
-
-                <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80">
-
-                <div class="adatok">
-                    <h3>BMW 320d</h3>
-                    <p>2019 | 145 000 km | Dízel</p>
-                    <p class="ar">7 290 000 Ft</p>
-                    <p>Budapest</p>
-                    <button onclick="kedvenc(this)">Kedvencekhez</button>
-                </div>
-
-            </div>
-
-
-            <div class="auto"
-                data-marka="Mercedes"
-                data-ev="2018"
-                data-ar="5200000"
-                data-tipus="auto">
-
-                <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=600&q=80">
-
-                <div class="adatok">
-                    <h3>Mercedes AMG</h3>
-                    <p>2018 | Benzin | 120 000 km</p>
-                    <p class="ar">5 200 000 Ft</p>
-                    <p>Budapest</p>
-                    <button onclick="kedvenc(this)">Kedvencekhez</button>
-                </div>
-
-            </div>
-
-
-            <div class="auto"
-                data-marka="Audi"
-                data-ev="2020"
-                data-ar="4200000"
-                data-tipus="auto">
-
-                <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=600&q=80">
-
-                <div class="adatok">
-                    <h3>Audi RS6</h3>
-                    <p>2020 | Benzin | 180 000 km</p>
-                    <p class="ar">4 200 000 Ft</p>
-                    <p>Pécs</p>
-                    <button onclick="kedvenc(this)">Kedvencekhez</button>
-                </div>
-
-            </div>
-
-
-            <div class="auto"
-                data-marka="Seat"
-                data-ev="2008"
-                data-ar="1490000"
-                data-tipus="auto">
-
-                <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80">
-
-                <div class="adatok">
-                    <h3>Seat Ibiza</h3>
-                    <p>2008 | Benzin | 165 000 km</p>
-                    <p class="ar">1 490 000 Ft</p>
-                    <p>Pécs</p>
-                    <button onclick="kedvenc(this)">Kedvencekhez</button>
-                </div>
-
-            </div>
-
-
-            <div class="auto"
-                data-marka="Ford"
-                data-ev="2021"
-                data-ar="6890000"
-                data-tipus="auto">
-
-                <img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=800&q=80">
-
-                <div class="adatok">
-                    <h3>Ford Mustang</h3>
-                    <p>2021 | Benzin | 52 000 km</p>
-                    <p class="ar">6 890 000 Ft</p>
-                    <p>Győr</p>
-                    <button onclick="kedvenc(this)">Kedvencekhez</button>
-                </div>
-
-            </div>
-
-
-            <div class="auto"
-                data-marka="Volkswagen"
-                data-ev="2017"
-                data-ar="3790000"
-                data-tipus="auto">
-
-                <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800&q=80">
-
-                <div class="adatok">
-                    <h3>Volkswagen Golf</h3>
-                    <p>2017 | Dízel | 130 000 km</p>
-                    <p class="ar">3 790 000 Ft</p>
-                    <p>Szekszárd</p>
-                    <button onclick="kedvenc(this)">Kedvencekhez</button>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <section id="motorok">
-
-        <h2>Eladó motorok</h2>
 
         <div class="autok">
 
-
-            <div class="auto"
-                data-marka="Yamaha"
-                data-ev="2020"
-                data-ar="2890000"
-                data-tipus="motor">
-
-                <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80">
-
+            <article class="auto" data-tipus="auto" data-marka="suzuki" data-ev="2019" data-ar="4500000">
+                <img src="kepek/suzuki-swift.jpg" alt="Suzuki Swift" loading="lazy">
                 <div class="adatok">
-                    <h3>Yamaha MT-07</h3>
-                    <p>2020 | Benzin | 18 000 km</p>
-                    <p class="ar">2 890 000 Ft</p>
-                    <p>Pécs</p>
-                    <button onclick="kedvenc(this)">Kedvencekhez</button>
+                    <span class="cimke">Benzin</span>
+                    <h3>Suzuki Swift 1.2</h3>
+                    <p>2019 · 60 000 km · 90 LE · Manuális</p>
+                    <p class="ar">4 500 000 Ft</p>
+                    <button type="button" onclick="kedvenc(this)">♡ Kedvenc</button>
                 </div>
+            </article>
 
-            </div>
-
-
-            <div class="auto"
-                data-marka="Kawasaki"
-                data-ev="2019"
-                data-ar="3190000"
-                data-tipus="motor">
-
-                <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80">
-
+            <article class="auto" data-tipus="auto" data-marka="skoda" data-ev="2018" data-ar="5900000">
+                <img src="kepek/skoda-octavia.jpg" alt="Škoda Octavia" loading="lazy">
                 <div class="adatok">
-                    <h3>Kawasaki Ninja 650</h3>
-                    <p>2019 | Benzin | 22 000 km</p>
-                    <p class="ar">3 190 000 Ft</p>
-                    <p>Debrecen</p>
-                    <button onclick="kedvenc(this)">Kedvencekhez</button>
+                    <span class="cimke">Dízel</span>
+                    <h3>Škoda Octavia 2.0 TDI</h3>
+                    <p>2018 · 150 000 km · 150 LE · Manuális</p>
+                    <p class="ar">5 900 000 Ft</p>
+                    <button type="button" onclick="kedvenc(this)">♡ Kedvenc</button>
                 </div>
+            </article>
 
-            </div>
-
-
-            <div class="auto"
-                data-marka="Honda"
-                data-ev="2021"
-                data-ar="3990000"
-                data-tipus="motor">
-
-                <img src="https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&w=800&q=80">
-
+            <article class="auto" data-tipus="auto" data-marka="volkswagen" data-ev="2021" data-ar="12900000">
+                <img src="kepek/vw-golf-gti.jpg" alt="Volkswagen Golf GTI" loading="lazy">
                 <div class="adatok">
-                    <h3>Honda CBR 600</h3>
-                    <p>2021 | Benzin | 14 000 km</p>
-                    <p class="ar">3 990 000 Ft</p>
-                    <p>Budapest</p>
-                    <button onclick="kedvenc(this)">Kedvencekhez</button>
+                    <span class="cimke">Benzin</span>
+                    <h3>Volkswagen Golf 8 GTI</h3>
+                    <p>2021 · 45 000 km · 245 LE · Automata</p>
+                    <p class="ar">12 900 000 Ft</p>
+                    <button type="button" onclick="kedvenc(this)">♡ Kedvenc</button>
                 </div>
+            </article>
 
-            </div>
+            <article class="auto" data-tipus="auto" data-marka="audi" data-ev="2020" data-ar="11400000">
+                <img src="kepek/audi-a4-avant.jpg" alt="Audi A4 Avant" loading="lazy">
+                <div class="adatok">
+                    <span class="cimke">Dízel</span>
+                    <h3>Audi A4 Avant 40 TDI</h3>
+                    <p>2020 · 90 000 km · 204 LE · Automata</p>
+                    <p class="ar">11 400 000 Ft</p>
+                    <button type="button" onclick="kedvenc(this)">♡ Kedvenc</button>
+                </div>
+            </article>
+
+            <article class="auto" data-tipus="auto" data-marka="mercedes" data-ev="2019" data-ar="10700000">
+                <img src="kepek/mercedes-c220d.jpg" alt="Mercedes-Benz C 220 d" loading="lazy">
+                <div class="adatok">
+                    <span class="cimke">Dízel</span>
+                    <h3>Mercedes-Benz C 220 d AMG Line</h3>
+                    <p>2019 · 120 000 km · 194 LE · Automata</p>
+                    <p class="ar">10 700 000 Ft</p>
+                    <button type="button" onclick="kedvenc(this)">♡ Kedvenc</button>
+                </div>
+            </article>
+
+            <article class="auto" data-tipus="auto" data-marka="bmw" data-ev="2021" data-ar="28900000">
+                <img src="kepek/bmw-m3-competition.jpg" alt="BMW M3 Competition" loading="lazy">
+                <div class="adatok">
+                    <span class="cimke">Benzin</span>
+                    <h3>BMW M3 Competition</h3>
+                    <p>2021 · 38 000 km · 510 LE · Automata</p>
+                    <p class="ar">28 900 000 Ft</p>
+                    <button type="button" onclick="kedvenc(this)">♡ Kedvenc</button>
+                </div>
+            </article>
 
         </div>
-
     </section>
-
 
     <section id="rolunk">
-
         <h2>Rólunk</h2>
-
         <p>
-            Az AutoMarket egy egyszerű és könnyen használható
-            használtautó- és motorhirdetési platform.
+            Az AutoMarket használt autókat kínál egy helyen.
+            Minden hirdetésnél látod az évjáratot, a futásteljesítményt
+            és a teljes árat, hogy gyorsan össze tudd hasonlítani a lehetőségeket.
         </p>
-
-        <p>
-            Célunk, hogy a vásárlók gyorsan megtalálják a megfelelő
-            járművet, az eladók pedig egyszerűen feladhassák hirdetéseiket.
-        </p>
-
     </section>
-
 </main>
 
-
 <footer>
-    <p>© 2026 AutoMarket - Minden jog fenntartva.</p>
+    <p>&copy; 2026 AutoMarket. Minden jog fenntartva.</p>
 </footer>
-
 
 <script>
 
-function bejelentkezes() {
-    alert("A bejelentkezés hamarosan elérhető!");
+let aktivTipus = "mind";
+
+let toastIdozito;
+
+
+
+function uzenet(szoveg) {
+    let toast = document.getElementById("toast");
+
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "toast";
+        toast.className = "toast";
+        toast.setAttribute("role", "status");
+        toast.setAttribute("aria-live", "polite");
+        document.body.appendChild(toast);
+    }
+
+    toast.textContent = szoveg;
+    toast.classList.add("latszik");
+
+    clearTimeout(toastIdozito);
+
+    toastIdozito = setTimeout(function () {
+        toast.classList.remove("latszik");
+    }, 2800);
 }
 
+function bejelentkezes() {
+    uzenet("A bejelentkezés hamarosan elérhető!");
+}
 
 function hirdetes() {
-    alert("A hirdetés feladása hamarosan elérhető!");
+    uzenet("A hirdetés feladása hamarosan elérhető!");
 }
+
 
 
 function kedvenc(gomb) {
-    gomb.innerText = "✓ Kedvencekben";
+
+    if (!gomb.dataset.eredeti) {
+        gomb.dataset.eredeti = gomb.innerText;
+    }
+
+    const bekapcsolva = gomb.classList.toggle("kedvenc-aktiv");
+
+    gomb.innerText = bekapcsolva
+        ? "✓ Kedvencekben"
+        : gomb.dataset.eredeti;
+
+    gomb.setAttribute("aria-pressed", bekapcsolva);
+
+    uzenet(
+        bekapcsolva
+            ? "Hozzáadva a kedvencekhez"
+            : "Eltávolítva a kedvencekből"
+    );
 }
 
+
+
+function aktivGomb() {
+
+    document.querySelectorAll(".kategoriak button").forEach(function (gomb) {
+
+        const onclick = gomb.getAttribute("onclick") || "";
+
+        const aktiv = onclick.includes("mutatMindet")
+            ? aktivTipus === "mind"
+            : aktivTipus === "auto";
+
+        gomb.classList.toggle("aktiv", aktiv);
+        gomb.setAttribute("aria-pressed", aktiv);
+    });
+}
 
 function mutatAutok() {
-
-    const jarmuvek = document.querySelectorAll(".auto");
-
-    jarmuvek.forEach(function(auto) {
-
-        if (auto.dataset.tipus === "auto") {
-            auto.style.display = "block";
-        } else {
-            auto.style.display = "none";
-        }
-
-    });
-
+    aktivTipus = "auto";
+    frissit();
 }
-
-
-function mutatMotorok() {
-
-    const jarmuvek = document.querySelectorAll(".auto");
-
-    jarmuvek.forEach(function(auto) {
-
-        if (auto.dataset.tipus === "motor") {
-            auto.style.display = "block";
-        } else {
-            auto.style.display = "none";
-        }
-
-    });
-
-}
-
 
 function mutatMindet() {
-
-    const jarmuvek = document.querySelectorAll(".auto");
-
-    jarmuvek.forEach(function(auto) {
-        auto.style.display = "block";
-    });
-
+    aktivTipus = "mind";
+    frissit();
 }
+
 
 
 function kereses() {
+    frissit();
+}
 
-    const keresett = document
-        .getElementById("kereses")
-        .value
-        .toLowerCase();
+function frissit() {
 
-    const marka = document
-        .getElementById("marka")
-        .value;
+    const keresett = document.getElementById("kereses").value.trim().toLowerCase();
+    const marka = document.getElementById("marka").value;
+    const evjarat = document.getElementById("evjarat").value;
+    const ar = document.getElementById("ar").value;
 
-    const evjarat = document
-        .getElementById("evjarat")
-        .value;
+    let talalat = 0;
 
-    const ar = document
-        .getElementById("ar")
-        .value;
-
-    const jarmuvek = document.querySelectorAll(".auto");
-
-
-    jarmuvek.forEach(function(auto) {
-
-        const szoveg = auto.innerText.toLowerCase();
-
-        const autoMarka = auto.dataset.marka;
-        const autoEv = Number(auto.dataset.ev);
-        const autoAr = Number(auto.dataset.ar);
+    document.querySelectorAll(".auto").forEach(function (auto) {
 
         let megfelel = true;
 
-
-        if (keresett && !szoveg.includes(keresett)) {
+        if (aktivTipus !== "mind" && auto.dataset.tipus !== aktivTipus) {
             megfelel = false;
         }
 
-
-        if (marka && autoMarka !== marka) {
+        if (keresett && !auto.textContent.toLowerCase().includes(keresett)) {
             megfelel = false;
         }
 
-
-        if (evjarat && autoEv < Number(evjarat)) {
+        if (marka && auto.dataset.marka !== marka) {
             megfelel = false;
         }
 
-
-        if (ar && autoAr > Number(ar)) {
+        if (evjarat && Number(auto.dataset.ev) < Number(evjarat)) {
             megfelel = false;
         }
 
+        if (ar && Number(auto.dataset.ar) > Number(ar)) {
+            megfelel = false;
+        }
+
+        auto.hidden = !megfelel;
 
         if (megfelel) {
-            auto.style.display = "block";
-        } else {
-            auto.style.display = "none";
+            talalat++;
+        }
+    });
+
+    aktivGomb();
+    uresAllapot(talalat);
+}
+
+
+
+function uresAllapot(talalat) {
+
+    const lista = document.querySelector(".autok");
+
+    if (!lista) return;
+
+    let doboz = document.getElementById("nincs-talalat");
+
+    if (talalat === 0) {
+
+        if (!doboz) {
+            doboz = document.createElement("p");
+            doboz.id = "nincs-talalat";
+            doboz.className = "nincs-talalat";
+
+            doboz.textContent =
+                "Nincs a feltételeknek megfelelő autó. Próbálj kevesebb szűrőt használni.";
+
+            lista.insertAdjacentElement("afterend", doboz);
+        }
+
+        doboz.hidden = false;
+
+    } else if (doboz) {
+        doboz.hidden = true;
+    }
+}
+
+
+
+const TARTALEK_KEP = "data:image/svg+xml," + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">' +
+    '<rect width="400" height="300" fill="#1e242c"/>' +
+    '<path d="M70 190l25-50c4-8 12-13 21-13h168c9 0 17 5 21 13l25 50v30H70z" fill="none" stroke="#ff5a1f" stroke-width="6" stroke-linejoin="round"/>' +
+    '<circle cx="125" cy="222" r="22" fill="#1e242c" stroke="#ff5a1f" stroke-width="6"/>' +
+    '<circle cx="275" cy="222" r="22" fill="#1e242c" stroke="#ff5a1f" stroke-width="6"/>' +
+    '</svg>'
+);
+
+document.addEventListener("error", function (esemeny) {
+
+    const kep = esemeny.target;
+
+    if (kep.tagName === "IMG" && kep.src !== TARTALEK_KEP) {
+        kep.src = TARTALEK_KEP;
+    }
+
+}, true);
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const keresoMezo = document.getElementById("kereses");
+
+    keresoMezo.addEventListener("keydown", function (esemeny) {
+
+        if (esemeny.key === "Enter") {
+            esemeny.preventDefault();
+            kereses();
         }
 
     });
 
-}
+    ["marka", "evjarat", "ar"].forEach(function (id) {
+
+        document.getElementById(id).addEventListener("change", kereses);
+
+    });
+
+    aktivGomb();
+
+});
 
 </script>
 
