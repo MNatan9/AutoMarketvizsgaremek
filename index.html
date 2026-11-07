@@ -384,6 +384,8 @@ main section > h2::before {
 }
 .toast.latszik { opacity: 1; transform: translate(-50%, 0); }
 
+/* ---------- Rólunk ---------- */
+
 #rolunk {
     padding: clamp(24px, 4vw, 40px);
     border: 1px solid var(--border);
@@ -392,7 +394,35 @@ main section > h2::before {
     background: var(--surface);
     box-shadow: var(--shadow);
 }
-#rolunk p { max-width: 850px; color: var(--muted); }
+#rolunk p { max-width: 850px; margin: 0 0 16px; color: var(--muted); }
+
+.rolunk-racs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 28px;
+}
+
+.rolunk-doboz {
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--primary);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+}
+
+.rolunk-doboz h3 {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+#rolunk .rolunk-doboz p {
+    margin: 0;
+    font-size: .93rem;
+}
 
 footer {
     padding: 28px 20px;
@@ -515,6 +545,8 @@ footer p { margin: 0; }
         position: static;
         max-height: none;
     }
+
+    .rolunk-racs { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 600px) {
@@ -560,7 +592,7 @@ footer p { margin: 0; }
 
 <section class="hero">
     <div>
-        <h2>Találd meg a következő járgányod</h2>
+        <h2>Találd meg a következő autód</h2>
         <p>Használt autók egy helyen, valós áron.</p>
     </div>
 </section>
@@ -622,11 +654,38 @@ footer p { margin: 0; }
 
     <section id="rolunk">
         <h2>Rólunk</h2>
+
         <p>
-            Az AutoMarket használt autókat kínál egy helyen.
-            Minden hirdetésnél látod az évjáratot, az üzemanyagot
-            és a teljes árat, hogy gyorsan össze tudd hasonlítani a lehetőségeket.
+            Az AutoMarket azért jött létre, hogy a használtautó-keresés végre egyszerű legyen.
+            Nem kell tucatnyi oldalt végignézned: egy helyen találod meg a népszerű márkák
+            hirdetéseit, a kisebb városi autóktól a prémium kategóriáig.
         </p>
+
+        <p>
+            Minden hirdetésnél jól látható az évjárat, az üzemanyag típusa, a szín és a teljes ár,
+            így gyorsan össze tudod hasonlítani a lehetőségeket. A bal oldali szűrővel pillanatok alatt
+            leszűkítheted a kínálatot márka, üzemanyag (benzin, dízel, hibrid), évjárat vagy szín szerint.
+        </p>
+
+        <p>
+            Célunk, hogy átlátható és kényelmes felületet adjunk mind a vásárlóknak, mind az eladóknak.
+            Regisztrálj, mentsd el a kedvenc autóidat, és találd meg azt, amelyik valóban hozzád illik.
+        </p>
+
+        <div class="rolunk-racs">
+            <div class="rolunk-doboz">
+                <h3>Egyszerű keresés</h3>
+                <p>Négy szűrő, amivel másodpercek alatt megtalálod, amit keresel.</p>
+            </div>
+            <div class="rolunk-doboz">
+                <h3>Átlátható adatok</h3>
+                <p>Évjárat, üzemanyag, szín és teljes ár minden hirdetésnél egyértelműen kiírva.</p>
+            </div>
+            <div class="rolunk-doboz">
+                <h3>Minden egy helyen</h3>
+                <p>Tizennégy népszerű márka egyetlen oldalon, külön keresgélés nélkül.</p>
+            </div>
+        </div>
     </section>
 </main>
 
