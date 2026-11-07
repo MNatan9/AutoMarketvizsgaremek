@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: localhost:3306
--- Létrehozás ideje: 2026. Nov 07. 19:30
+-- Létrehozás ideje: 2026. Nov 07. 20:26
 -- Kiszolgáló verziója: 5.7.24
 -- PHP verzió: 8.3.1
 
@@ -35,7 +35,8 @@ CREATE TABLE `hirdetesek` (
   `kategoria_id` int(11) NOT NULL,
   `cim` varchar(100) NOT NULL,
   `leiras` text,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `aktiv` tinyint(1) DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
