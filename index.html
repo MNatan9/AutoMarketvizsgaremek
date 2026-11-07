@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AutoMarket – használt autók</title>
-    <meta name="description" content="Használt autók egy helyen: szűrj márka, üzemanyag, évjárat és szín szerint.">
+    <title>AutóMarket – használt autók</title>
+    <meta name="description" content="AutóMarket: használt autók egy helyen, szűrj márka, üzemanyag, évjárat és szín szerint.">
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='2' y='2' width='44' height='44' rx='10' fill='%23ff5a1f'/%3E%3Cpath fill='%23fff' d='M8 31 L9 25 Q10 22.5 13 22.5 L18 22.5 L21.5 17 Q22.5 16 24 16 L31 16 Q33 16 34.5 17.5 L37.5 22.5 L39 22.5 Q41 22.5 41 25 L41 31 Z'/%3E%3Cpath fill='%23ff5a1f' d='M22.5 22.5 L24.5 18.5 L26.5 18.5 L26.5 22.5 Z M28.5 22.5 L28.5 18.5 L31 18.5 Q32 18.5 32.6 19.4 L34.5 22.5 Z'/%3E%3Ccircle cx='15' cy='31' r='4.2' fill='%23ff5a1f' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='34' cy='31' r='4.2' fill='%23ff5a1f' stroke='%23fff' stroke-width='2.5'/%3E%3Cpath fill='%23fff' d='M8 8h9l4 4-4 4H8z'/%3E%3Ccircle cx='11.5' cy='12' r='1.3' fill='%23ff5a1f'/%3E%3C/svg%3E">
 
     <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700&display=swap');
@@ -91,16 +93,33 @@ header {
 
 .nav h1 {
     margin: 0;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+/* ---------- Logó ---------- */
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     color: #fff;
+    text-decoration: none;
     font-family: var(--font-display);
     font-style: italic;
     font-weight: 800;
     font-size: clamp(1.7rem, 3vw, 2.3rem);
     letter-spacing: .02em;
     text-transform: uppercase;
-    line-height: 1.1;
-    white-space: nowrap;
 }
+.logo svg {
+    flex: none;
+    width: clamp(36px, 4.4vw, 46px);
+    height: clamp(36px, 4.4vw, 46px);
+    transition: transform .3s ease;
+}
+.logo:hover svg { transform: translateX(3px) scale(1.05); }
+.logo em { font-style: italic; color: var(--primary); }
 
 nav { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
 
@@ -568,6 +587,7 @@ footer p { margin: 0; }
         animation-duration: .01ms !important;
     }
     .auto:hover { transform: none; }
+    .logo:hover svg { transform: none; }
 }
     </style>
 </head>
@@ -576,7 +596,24 @@ footer p { margin: 0; }
 
 <header>
     <div class="nav">
-        <h1>AutoMarket</h1>
+        <h1>
+            <a class="logo" href="#" aria-label="AutóMarket – főoldal">
+                <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="2" y="2" width="44" height="44" rx="10" fill="#ff5a1f"/>
+                    <!-- autó karosszéria -->
+                    <path fill="#fff" d="M8 31 L9 25 Q10 22.5 13 22.5 L18 22.5 L21.5 17 Q22.5 16 24 16 L31 16 Q33 16 34.5 17.5 L37.5 22.5 L39 22.5 Q41 22.5 41 25 L41 31 Z"/>
+                    <!-- ablakok -->
+                    <path fill="#ff5a1f" d="M22.5 22.5 L24.5 18.5 L26.5 18.5 L26.5 22.5 Z M28.5 22.5 L28.5 18.5 L31 18.5 Q32 18.5 32.6 19.4 L34.5 22.5 Z"/>
+                    <!-- kerekek -->
+                    <circle cx="15" cy="31" r="4.2" fill="#ff5a1f" stroke="#fff" stroke-width="2.5"/>
+                    <circle cx="34" cy="31" r="4.2" fill="#ff5a1f" stroke="#fff" stroke-width="2.5"/>
+                    <!-- árcímke -->
+                    <path fill="#fff" d="M8 8h9l4 4-4 4H8z"/>
+                    <circle cx="11.5" cy="12" r="1.3" fill="#ff5a1f"/>
+                </svg>
+                <span>Autó<em>Market</em></span>
+            </a>
+        </h1>
 
         <nav aria-label="Főmenü">
             <a href="#autok">Hirdetések</a>
@@ -656,7 +693,7 @@ footer p { margin: 0; }
         <h2>Rólunk</h2>
 
         <p>
-            Az AutoMarket azért jött létre, hogy a használtautó-keresés végre egyszerű legyen.
+            Az AutóMarket azért jött létre, hogy a használtautó-keresés végre egyszerű legyen.
             Nem kell tucatnyi oldalt végignézned: egy helyen találod meg a népszerű márkák
             hirdetéseit, a kisebb városi autóktól a prémium kategóriáig.
         </p>
@@ -690,7 +727,7 @@ footer p { margin: 0; }
 </main>
 
 <footer>
-    <p>&copy; 2026 AutoMarket. Minden jog fenntartva.</p>
+    <p>&copy; 2026 AutóMarket. Minden jog fenntartva.</p>
 </footer>
 
 <!-- Bejelentkezés / regisztráció ablak -->
