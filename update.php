@@ -5,26 +5,23 @@ require_once __DIR__ . "/../includes/auth_check.php";
 
 requireLogin();
 
-if (!isset($_SESSION["user_id"])) {
-    http_response_code(401);
-    response(false, "Először jelentkezz be!");
-    exit;
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    http_response_code(405);
+    response(false, "Nem megfelelő kérés!");
 }
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (!$data || empty($data["id"])) {
+if (!is_array($data)) {
     http_response_code(400);
-    response(false, "Hiányzó járműazonosító!");
-    exit;
+    response(false, "Hibás adatok!");
 }
 
-$id = filter_var($data["id"], FILTER_VALIDATE_INT);
+$id = filter_var($data["id"] ?? null, FILTER_VALIDATE_INT);
 
-if (!$id) {
+if (!$id || $id < 1) {
     http_response_code(400);
     response(false, "Érvénytelen járműazonosító!");
-    exit;
 }
 
 $mezok = [
@@ -52,7 +49,24 @@ foreach ($mezok as $mezo) {
 if (empty($frissitesek)) {
     http_response_code(400);
     response(false, "Nincs módosítandó adat!");
-    exit;
+}
+
+if (isset($data["marka"]) &&
+    (!is_string($data["marka"]) || trim($data["marka"]) === "" || strlen($data["marka"]) > 50)) {
+    http_response_code(400);
+    response(false, "Érvénytelen márka!");
+}
+
+if (isset($data["modell"]) &&
+    (!is_string($data["modell"]) || trim($data["modell"]) === "" || strlen($data["modell"]) > 50)) {
+    http_response_code(400);
+    response(false, "Érvénytelen modell!");
+}
+
+if (isset($data["tipus"]) &&
+    (!is_string($data["tipus"]) || trim($data["tipus"]) === "" || strlen($data["tipus"]) > 20)) {
+    http_response_code(400);
+    response(false, "Érvénytelen típus!");
 }
 
 if (isset($data["evjarat"]) &&
@@ -61,7 +75,6 @@ if (isset($data["evjarat"]) &&
     $data["evjarat"] > (int)date("Y") + 1)) {
     http_response_code(400);
     response(false, "Érvénytelen évjárat!");
-    exit;
 }
 
 if (isset($data["ar"]) &&
@@ -69,24 +82,60 @@ if (isset($data["ar"]) &&
     $data["ar"] < 0)) {
     http_response_code(400);
     response(false, "Érvénytelen ár!");
-    exit;
+}
+
+if (isset($data["futott_km"]) &&
+    $data["futott_km"] !== null &&
+    (!filter_var($data["futott_km"], FILTER_VALIDATE_INT) ||
+    $data["futott_km"] < 0)) {
+    http_response_code(400);
+    response(false, "Érvénytelen kilométeróra-állás!");
+}
+
+if (isset($data["uzemanyag"]) &&
+    (!is_string($data["uzemanyag"]) || strlen($data["uzemanyag"]) > 30)) {
+    http_response_code(400);
+    response(false, "Érvénytelen üzemanyag!");
+}
+
+if (isset($data["helyseg"]) &&
+    (!is_string($data["helyseg"]) || strlen($data["helyseg"]) > 50)) {
+    http_response_code(400);
+    response(false, "Érvénytelen helység!");
+}
+
+if (isset($data["kep_url"]) &&
+    (!is_string($data["kep_url"]) || strlen($data["kep_url"]) > 255)) {
+    http_response_code(400);
+    response(false, "Érvénytelen kép URL!");
 }
 
 try {
-    $ellenorzes = $conn->prepare(
-        "SELECT id FROM jarmuvek
-         WHERE id = :id AND tulaj_id = :tulaj_id"
-    );
 
-    $ellenorzes->execute([
-        ":id" => $id,
-        ":tulaj_id" => $_SESSION["user_id"]
-    ]);
+    $isAdmin = ($_SESSION["szerepkor"] ?? "") === "admin";
+
+    if ($isAdmin) {
+        $ellenorzes = $conn->prepare(
+            "SELECT id FROM jarmuvek WHERE id = ?"
+        );
+
+        $ellenorzes->execute([$id]);
+
+    } else {
+        $ellenorzes = $conn->prepare(
+            "SELECT id FROM jarmuvek
+             WHERE id = ? AND tulaj_id = ?"
+        );
+
+        $ellenorzes->execute([
+            $id,
+            $_SESSION["user_id"]
+        ]);
+    }
 
     if (!$ellenorzes->fetch()) {
         http_response_code(404);
-        response(false, "A hirdetés nem található, vagy nem a tiéd!");
-        exit;
+        response(false, "A hirdetés nem található, vagy nincs jogosultságod!");
     }
 
     $ertekek[":id"] = $id;
