@@ -12,11 +12,16 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
 $data = json_decode(file_get_contents("php://input"), true);
 
+if (!is_array($data)) {
+    http_response_code(400);
+    response(false, "Hibás adatok!");
+}
+
 $id = filter_var($data["id"] ?? null, FILTER_VALIDATE_INT);
 
 if (!$id || $id < 1) {
     http_response_code(400);
-    response(false, "Érvénytelen jármű ID!");
+    response(false, "Érvénytelen járműazonosító!");
 }
 
 try {
@@ -47,13 +52,11 @@ try {
 
     $stmt->execute([$id]);
 
-    response(true, "Sikeres jármű törlés!");
+    response(true, "Sikeres járműtörlés!");
 
 } catch (PDOException $e) {
-
     http_response_code(500);
     response(false, "Adatbázis hiba!");
-
 }
 
 ?>
