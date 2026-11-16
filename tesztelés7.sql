@@ -1,0 +1,1 @@
+SELECT MIN(ar) AS legolcsobb_jarmu, MAX(ar) AS legdragabb_jarmu FROM jarmuvek;
