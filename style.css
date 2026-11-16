@@ -1,6 +1,7 @@
-
+/* AutoMarket – sötét, motorsport hangulatú, reszponzív megjelenés
+   Az osztálynevek megegyeznek az eredetivel, a HTML-hez nem kell nyúlni. */
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700&display=swap');
- 
+
 :root {
     --primary: #ff5a1f;
     --primary-hover: #ff7a45;
@@ -9,7 +10,7 @@
     --dark-soft: #14181d;
     --background: #0f1216;
     --surface: #171b21;
-    --surface-2: #1e242c:
+    --surface-2: #1e242c;
     --text: #e8ebf0;
     --muted: #8b95a5;
     --border: #262d37;
@@ -19,18 +20,18 @@
     --font-display: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
     --font-body: 'Inter', Arial, Helvetica, sans-serif;
 }
- 
+
 *,
 *::before,
 *::after {
     box-sizing: border-box;
 }
- 
+
 html {
     scroll-behavior: smooth;
     scroll-padding-top: 90px;
 }
- 
+
 body {
     margin: 0;
     font-family: var(--font-body);
@@ -40,19 +41,19 @@ body {
     overflow-wrap: break-word;
     -webkit-font-smoothing: antialiased;
 }
- 
+
 img {
     display: block;
     max-width: 100%;
 }
- 
+
 button,
 input,
 select {
     font: inherit;
 }
- 
 
+/* Gombok: levágott sarkú, "versenyautós" forma */
 button {
     border: 0;
     padding: 11px 20px;
@@ -67,15 +68,16 @@ button {
     clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
     transition: background .2s ease, transform .2s ease;
 }
- 
+
 button:hover {
     background: var(--primary-hover);
+    transform: translateY(-2px);
 }
- 
+
 button:active {
     transform: translateY(1px);
 }
- 
+
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
@@ -83,8 +85,8 @@ select:focus-visible {
     outline: 3px solid var(--primary-glow);
     outline-offset: 3px;
 }
- 
 
+/* Fejléc */
 header {
     position: sticky;
     top: 0;
@@ -94,9 +96,10 @@ header {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     color: #fff;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid var(--primary);
+    box-shadow: 0 4px 18px var(--primary-glow);
 }
- 
+
 .nav {
     width: min(1200px, 100%);
     margin: 0 auto;
@@ -106,7 +109,7 @@ header {
     justify-content: space-between;
     gap: 24px;
 }
- 
+
 .nav h1 {
     margin: 0;
     color: #fff;
@@ -119,7 +122,7 @@ header {
     line-height: 1.1;
     white-space: nowrap;
 }
- 
+
 nav {
     display: flex;
     align-items: center;
@@ -127,7 +130,7 @@ nav {
     flex-wrap: wrap;
     gap: 8px;
 }
- 
+
 nav a {
     position: relative;
     color: #cfd5de;
@@ -137,7 +140,7 @@ nav a {
     font-size: .95rem;
     transition: color .2s ease;
 }
- 
+
 nav a::after {
     content: "";
     position: absolute;
@@ -150,20 +153,20 @@ nav a::after {
     transform-origin: left;
     transition: transform .25s ease;
 }
- 
+
 nav a:hover {
     color: #fff;
 }
- 
+
 nav a:hover::after {
     transform: scaleX(1);
 }
- 
+
 nav button {
     padding: 9px 16px;
 }
- 
 
+/* Hero */
 .hero {
     position: relative;
     padding: clamp(56px, 9vw, 120px) 20px;
@@ -176,15 +179,16 @@ nav button {
     border-bottom: 1px solid var(--border);
     overflow: hidden;
 }
- 
 
- 
+/* Ha van saját háttérképed, ezt a sort vedd ki a kommentből:
+.hero { background: linear-gradient(180deg, rgba(11,13,16,.55), rgba(11,13,16,.95)), url('kepek/hero.jpg') center / cover; } */
+
 .hero > div {
     position: relative;
     width: min(1100px, 100%);
     margin: 0 auto;
 }
- 
+
 .hero h2 {
     margin: 0 0 14px;
     font-family: var(--font-display);
@@ -195,15 +199,15 @@ nav button {
     letter-spacing: .01em;
     text-transform: uppercase;
 }
- 
+
 .hero p {
     margin: 0 auto 34px;
     max-width: 600px;
     color: #aab3c0;
     font-size: clamp(1rem, 2vw, 1.15rem);
 }
- 
 
+/* Kereső */
 .kereso {
     display: grid;
     grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(145px, 1fr)) auto;
@@ -216,7 +220,7 @@ nav button {
     box-shadow: var(--shadow);
     text-align: left;
 }
- 
+
 .kereso input,
 .kereso select {
     width: 100%;
@@ -229,37 +233,37 @@ nav button {
     background: var(--dark-soft);
     transition: border-color .2s ease;
 }
- 
+
 .kereso input::placeholder {
     color: var(--muted);
 }
- 
+
 .kereso input:hover,
 .kereso select:hover {
     border-color: #3a4351;
 }
- 
+
 .kereso input:focus,
 .kereso select:focus {
     border-color: var(--primary);
 }
- 
+
 .kereso button {
     min-height: 48px;
     white-space: nowrap;
 }
- 
 
+/* Tartalom */
 main {
     width: min(1200px, 100%);
     margin: 0 auto;
     padding: 48px 24px 60px;
 }
- 
+
 main section {
     margin-bottom: 56px;
 }
- 
+
 main section > h2 {
     display: flex;
     align-items: center;
@@ -272,7 +276,7 @@ main section > h2 {
     line-height: 1.1;
     text-transform: uppercase;
 }
- 
+
 main section > h2::before {
     content: "";
     flex: none;
@@ -281,35 +285,35 @@ main section > h2::before {
     background: var(--primary);
     transform: skewX(-18deg);
 }
- 
+
 .kategoriak {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 28px;
 }
- 
+
 .kategoriak button {
     min-width: 110px;
     color: var(--text);
     background: var(--surface-2);
 }
- 
+
 .kategoriak button:hover,
 .kategoriak button.aktiv,
 .kategoriak button[aria-pressed="true"] {
     color: #fff;
     background: var(--primary);
 }
- 
 
+/* Autókártyák */
 .autok {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
     align-items: stretch;
 }
- 
+
 .auto {
     position: relative;
     min-width: 0;
@@ -320,7 +324,7 @@ main section > h2::before {
     box-shadow: var(--shadow);
     transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
- 
+
 .auto::after {
     content: "";
     position: absolute;
@@ -333,17 +337,17 @@ main section > h2::before {
     transform-origin: left;
     transition: transform .3s ease;
 }
- 
+
 .auto:hover {
     transform: translateY(-4px);
     border-color: #3a4351;
     box-shadow: 0 16px 36px rgba(0, 0, 0, .55), 0 0 0 1px var(--primary-glow);
 }
- 
+
 .auto:hover::after {
     transform: scaleX(1);
 }
- 
+
 .auto img {
     width: 100%;
     height: 220px;
@@ -351,11 +355,11 @@ main section > h2::before {
     background: var(--surface-2);
     transition: transform .5s ease;
 }
- 
+
 .auto:hover img {
     transform: scale(1.05);
 }
- 
+
 .adatok {
     display: flex;
     flex-direction: column;
@@ -363,7 +367,7 @@ main section > h2::before {
     padding: 20px;
     height: calc(100% - 220px);
 }
- 
+
 .adatok h3 {
     margin: 0 0 8px;
     font-family: var(--font-display);
@@ -373,13 +377,13 @@ main section > h2::before {
     letter-spacing: .01em;
     text-transform: uppercase;
 }
- 
+
 .adatok p {
     margin: 0 0 6px;
     color: var(--muted);
     font-size: .95rem;
 }
- 
+
 .adatok .ar {
     margin: 8px 0 14px;
     color: var(--primary);
@@ -388,7 +392,7 @@ main section > h2::before {
     font-weight: 800;
     letter-spacing: .01em;
 }
- 
+
 .adatok button {
     width: 100%;
     margin-top: auto;
@@ -396,6 +400,7 @@ main section > h2::before {
     padding-bottom: 11px;
 }
 
+/* Opcionális címke a kártyákon, pl. <span class="cimke">Újszerű</span> */
 .cimke {
     display: inline-block;
     margin-bottom: 10px;
@@ -406,8 +411,8 @@ main section > h2::before {
     font-size: .78rem;
     font-weight: 600;
 }
- 
 
+/* Rólunk */
 #rolunk {
     padding: clamp(24px, 4vw, 40px);
     border: 1px solid var(--border);
@@ -416,12 +421,12 @@ main section > h2::before {
     background: var(--surface);
     box-shadow: var(--shadow);
 }
- 
+
 #rolunk p {
     max-width: 850px;
     color: var(--muted);
 }
- 
+
 footer {
     padding: 28px 20px;
     color: var(--muted);
@@ -429,124 +434,124 @@ footer {
     background: var(--dark);
     border-top: 1px solid var(--border);
 }
- 
+
 footer p {
     margin: 0;
 }
- 
+
 [hidden] {
     display: none !important;
 }
- 
 
+/* Tablet */
 @media (max-width: 1000px) {
     .nav {
         align-items: flex-start;
         flex-direction: column;
         gap: 12px;
     }
- 
+
     nav {
         justify-content: flex-start;
         width: 100%;
     }
- 
+
     .kereso {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
- 
+
     .kereso input {
         grid-column: 1 / -1;
     }
- 
+
     .autok {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 18px;
     }
 }
- 
 
+/* Telefon */
 @media (max-width: 600px) {
     html {
         scroll-padding-top: 150px;
     }
- 
+
     .nav {
         padding: 12px 16px;
     }
- 
+
     nav {
         gap: 4px;
     }
- 
+
     nav a {
         padding: 7px 8px;
         font-size: .9rem;
     }
- 
+
     nav button {
         flex: 1 1 auto;
         padding: 9px 10px;
         font-size: .95rem;
     }
- 
+
     .hero {
         padding: 48px 15px;
     }
- 
+
     .kereso {
         grid-template-columns: minmax(0, 1fr);
         padding: 12px;
         gap: 10px;
     }
- 
+
     .kereso input {
         grid-column: auto;
     }
- 
+
     main {
         padding: 32px 15px 40px;
     }
- 
+
     main section {
         margin-bottom: 36px;
     }
- 
+
     .kategoriak button {
         flex: 1 1 90px;
     }
- 
+
     .autok {
         grid-template-columns: minmax(0, 1fr);
         gap: 18px;
     }
- 
+
     .auto img {
         height: clamp(190px, 58vw, 280px);
     }
- 
+
     .adatok {
         height: auto;
         min-height: 0;
         padding: 17px;
     }
- 
+
     .adatok button {
         margin-top: 10px;
     }
 }
- 
+
 @media (max-width: 360px) {
     nav a,
     nav button {
         font-size: .82rem;
     }
- 
+
     .adatok h3 {
         font-size: 1.3rem;
     }
 }
- 
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -556,9 +561,10 @@ footer p {
         animation-duration: .01ms !important;
         animation-iteration-count: 1 !important;
     }
- 
+
     .auto:hover,
-    .auto:hover img {
+    .auto:hover img,
+    button:hover {
         transform: none;
     }
 }
