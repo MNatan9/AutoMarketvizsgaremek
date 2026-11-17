@@ -19,7 +19,7 @@ A fiatal friss jogsis emberek és az idősebb emberek.
 Eszközök és anyagok: Milyen hardverre, szoftverre, alapanyagokra vagy szerszámokra volt szükség?
 Egy vásárlási centrum ahol az érdeklődők tudnak maguknak választani járművet. Amikre még szükség van az egy műhely ahol karban tudjuk tartani az autókat egy telep ahol az autókat tudjuk tárolni és egy weboldal ahol tudjuk őket értékesiteni. 
 
-A projekt egy modern, felhasználóbarát webes alkalmazás használtautók és motorok adásvételére, amely gyors és átlátható felületet biztosít a hirdetéshez és a böngészéshez.
+A projekt egy modern, felhasználóbarát webes alkalmazás használtautók adásvételére, amely gyors és átlátható felületet biztosít a hirdetéshez és a böngészéshez.
 
 Weboldal Tulajdonságai:
 Saját adatbázis a felhasználók és hirdetések biztonságos tárolására.
