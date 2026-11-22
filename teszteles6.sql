@@ -1,0 +1,1 @@
+SELECT COUNT(*) AS osszes_jarmu, ROUND(AVG(ar)) AS atlag_ar FROM jarmuvek;
